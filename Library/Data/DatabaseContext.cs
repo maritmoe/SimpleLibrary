@@ -42,12 +42,14 @@ namespace Library.Data
             );
 
             // seed some borrowings
-            List<Borrowing> borrowings = new List<Borrowing>();
-            borrowings.Add(new Borrowing { BorrowedDate = new DateOnly(2024, 01, 01), UserId = 1, BookId = 1 });
-            borrowings.Add(new Borrowing { BorrowedDate = new DateOnly(2024, 01, 20), UserId = 2, BookId = 2 });
-            borrowings.Add(new Borrowing { BorrowedDate = new DateOnly(2024, 01, 11), UserId = 3, BookId = 4 });
-            borrowings.Add(new Borrowing { BorrowedDate = new DateOnly(2024, 01, 15), UserId = 4, BookId = 3 });
-            borrowings.Add(new Borrowing { BorrowedDate = new DateOnly(2024, 02, 01), UserId = 2, BookId = 1 });
+            List<Borrowing> borrowings =
+            [
+                new Borrowing { BorrowedDate = new DateOnly(2024, 01, 01), UserId = 1, BookId = 1 },
+                new Borrowing { BorrowedDate = new DateOnly(2024, 01, 20), UserId = 2, BookId = 2 },
+                new Borrowing { BorrowedDate = new DateOnly(2024, 01, 11), UserId = 3, BookId = 4 },
+                new Borrowing { BorrowedDate = new DateOnly(2024, 01, 15), UserId = 4, BookId = 3 },
+                new Borrowing { BorrowedDate = new DateOnly(2024, 02, 01), UserId = 2, BookId = 1 },
+            ];
 
             // add to model
             modelBuilder.Entity<Borrowing>().HasData(borrowings);
