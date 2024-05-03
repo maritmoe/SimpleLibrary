@@ -42,7 +42,7 @@ namespace Library.Repository
 
         public async Task<IEnumerable<Book>> GetBooks()
         {
-            return await _context.Books.ToListAsync();
+            return await _context.Books.Include(s => s.Borrowings).ThenInclude(e => e.User).ToListAsync();
         }
 
         public async Task<Book?> GetBook(int bookId, PreloadPolicy preloadPolicy = PreloadPolicy.DoNotPreloadRelations)
@@ -61,15 +61,15 @@ namespace Library.Repository
 
         public async Task<IEnumerable<Borrowing>> GetBorrowings(int userId)
         {
-            return await _context.Borrowings.Where(e => e.UserId == userId).ToListAsync();
+            return await _context.Borrowings.Where(e => e.UserId == userId).Include(s => s.User).Include(e => e.Book).ToListAsync();
         }
 
-        public async Task<Borrowing?> CreateBorrowing(DateOnly date, User user, Book book)
+        public async Task<Borrowing?> CreateBorrowing(DateOnly borrowedDate, User user, Book book)
         {
             if (user == null || book == null) return null;
             var borrowing = new Borrowing
             {
-                BorrowedDate = date,
+                BorrowedDate = borrowedDate,
                 UserId = user.Id,
                 User = user,
                 BookId = book.Id,

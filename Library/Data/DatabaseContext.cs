@@ -35,10 +35,10 @@ namespace Library.Data
 
             // seed some books
             modelBuilder.Entity<Book>().HasData(
-                new Book { Id = 1, Title = "C# Book For Beginners" },
-                new Book { Id = 2, Title = "React Volume 2" },
-                new Book { Id = 3, Title = "Java" },
-                new Book { Id = 4, Title = "How To Use Postgres" }
+                new Book { Id = 1, Title = "C# Book For Beginners", Pages = 100 },
+                new Book { Id = 2, Title = "React Volume 2", Pages = 210 },
+                new Book { Id = 3, Title = "Java", Pages = 350 },
+                new Book { Id = 4, Title = "How To Use Postgres", Pages = 58 }
             );
 
             // seed some borrowings
