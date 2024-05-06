@@ -13,6 +13,7 @@ namespace Library.Endpoints
             var surgeryGroup = app.MapGroup("library");
 
             surgeryGroup.MapGet("/users", GetUsers);
+            surgeryGroup.MapGet("/users/{userId}", GetUser);
             surgeryGroup.MapPost("/users", CreateUser);
             surgeryGroup.MapGet("/books", GetBooks);
             surgeryGroup.MapGet("/books/{bookId}", GetBook);
@@ -29,6 +30,19 @@ namespace Library.Endpoints
             {
                 userDto.Add(new UserResponseDTO(user));
             }
+            return TypedResults.Ok(userDto);
+        }
+
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public static async Task<IResult> GetUser(IRepository repository, int userId)
+        {
+            User? user = await repository.GetUser(userId, PreloadPolicy.PreloadRelations);
+            if (user == null)
+            {
+                return Results.NotFound("User not found");
+            }
+            var userDto = new UserResponseDTO(user);
             return TypedResults.Ok(userDto);
         }
 
