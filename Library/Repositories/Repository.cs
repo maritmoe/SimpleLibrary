@@ -76,6 +76,15 @@ namespace Library.Repository
             }
         }
 
+        public async Task<Book?> CreateBook(string title, int pages)
+        {
+            if (title == "" || pages <= 0) return null;
+            var book = new Book { Title = title, Pages = pages };
+            await _context.Books.AddAsync(book);
+            await _context.SaveChangesAsync();
+            return book;
+        }
+
         public async Task<Book?> UpdateBook(Book book)
         {
             _context.Books.Update(book);

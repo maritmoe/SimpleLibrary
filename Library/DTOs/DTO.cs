@@ -38,10 +38,14 @@ namespace Library.DTOs
             Id = book.Id;
             Title = book.Title;
             Pages = book.Pages;
-            foreach (Borrowing borrowing in book.Borrowings)
+            if (book.Borrowings != null)
             {
-                Borrowings.Add(new BookBorrowingDTO(borrowing));
+                foreach (Borrowing borrowing in book.Borrowings)
+                {
+                    Borrowings.Add(new BookBorrowingDTO(borrowing));
+                }
             }
+
         }
     }
 

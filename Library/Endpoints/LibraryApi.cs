@@ -18,6 +18,7 @@ namespace Library.Endpoints
             surgeryGroup.MapDelete("/users/{userId}", DeleteUser);
             surgeryGroup.MapGet("/books", GetBooks);
             surgeryGroup.MapGet("/books/{bookId}", GetBook);
+            surgeryGroup.MapPost("/books", CreateBook);
             surgeryGroup.MapPut("/books/{bookId}", UpdateBook);
             surgeryGroup.MapGet("/borrowings/{userId}", GetBorrowings);
             surgeryGroup.MapPost("/borrowings", UserBorrowBook);
@@ -57,7 +58,6 @@ namespace Library.Endpoints
             {
                 return Results.BadRequest("A non-empty Name is required");
             }
-            // validate: b) payload properties have acceptable values (ie. not empty, or within required ranges, etc...)
 
             User? user = await repository.CreateUser(payload.Name);
             if (user == null)
@@ -109,8 +109,27 @@ namespace Library.Endpoints
 
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public static async Task<IResult> CreateBook(IRepository repository, BookPayload payload)
+        {
+            if (payload.Title == null || payload.Title == "" || payload.Pages <= 0)
+            {
+                return Results.BadRequest("A non-empty Title and positive Pages is required");
+            }
+
+            Book? book = await repository.CreateBook(payload.Title, payload.Pages);
+            if (book == null)
+            {
+                return Results.BadRequest("Failed to create book");
+            }
+
+            return TypedResults.Ok(new BookResponseDTO(book));
+
+        }
+
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public static async Task<IResult> UpdateBook(IRepository repository, int bookId, UpdateBookPayload payload)
+        public static async Task<IResult> UpdateBook(IRepository repository, int bookId, BookPayload payload)
         {
             Book? book = await repository.GetBook(bookId, PreloadPolicy.PreloadRelations);
             if (book == null)
