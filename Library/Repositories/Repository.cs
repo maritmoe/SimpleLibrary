@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Library.Data;
 using Library.Models;
+using System.Runtime.CompilerServices;
 
 namespace Library.Repository
 {
@@ -39,6 +40,20 @@ namespace Library.Repository
             await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();
             return user;
+        }
+
+        public async Task<User?> DeleteUser(int userId)
+        {
+            User? user = await _context.Users.FindAsync(userId);
+            if (user == null)
+                return null;
+
+            User? userCopy = _context.Entry(user).CurrentValues.Clone().ToObject() as User;
+
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
+
+            return userCopy;
         }
 
         public async Task<IEnumerable<Book>> GetBooks()

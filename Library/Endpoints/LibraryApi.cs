@@ -15,6 +15,7 @@ namespace Library.Endpoints
             surgeryGroup.MapGet("/users", GetUsers);
             surgeryGroup.MapGet("/users/{userId}", GetUser);
             surgeryGroup.MapPost("/users", CreateUser);
+            surgeryGroup.MapDelete("/users/{userId}", DeleteUser);
             surgeryGroup.MapGet("/books", GetBooks);
             surgeryGroup.MapGet("/books/{bookId}", GetBook);
             surgeryGroup.MapGet("/borrowings/{userId}", GetBorrowings);
@@ -64,6 +65,18 @@ namespace Library.Endpoints
             }
 
             return TypedResults.Ok(new UserResponseDTO(user));
+        }
+
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public static async Task<IResult> DeleteUser(IRepository repository, int userId)
+        {
+            User? user = await repository.DeleteUser(userId);
+            if (user == null)
+            {
+                return Results.NotFound("User not found");
+            }
+            return TypedResults.Ok(user);
         }
 
 
