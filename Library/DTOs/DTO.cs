@@ -14,9 +14,12 @@ namespace Library.DTOs
         {
             Id = user.Id;
             Name = user.Name;
-            foreach (Borrowing borrowing in user.Borrowings)
+            if (user.Borrowings != null)
             {
-                Borrowings.Add(new UserBorrowingDTO(borrowing));
+                foreach (Borrowing borrowing in user.Borrowings)
+                {
+                    Borrowings.Add(new UserBorrowingDTO(borrowing));
+                }
             }
         }
     }
