@@ -18,6 +18,7 @@ namespace Library.Endpoints
             surgeryGroup.MapDelete("/users/{userId}", DeleteUser);
             surgeryGroup.MapGet("/books", GetBooks);
             surgeryGroup.MapGet("/books/{bookId}", GetBook);
+            surgeryGroup.MapPut("/books/{bookId}", UpdateBook);
             surgeryGroup.MapGet("/borrowings/{userId}", GetBorrowings);
             surgeryGroup.MapPost("/borrowings", UserBorrowBook);
         }
@@ -105,6 +106,34 @@ namespace Library.Endpoints
             var bookDto = new BookResponseDTO(book);
             return TypedResults.Ok(bookDto);
         }
+
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public static async Task<IResult> UpdateBook(IRepository repository, int bookId, UpdateBookPayload payload)
+        {
+            Book? book = await repository.GetBook(bookId, PreloadPolicy.PreloadRelations);
+            if (book == null)
+            {
+                return Results.NotFound("Book not found");
+            }
+            if (payload.Title == null || payload.Title == "")
+            {
+                return Results.BadRequest("Title cannot be empty");
+            }
+            if (payload.Pages <= 0)
+            {
+                return Results.BadRequest("Pages must be a positive number");
+            }
+
+            book.Title = payload.Title;
+            book.Pages = payload.Pages;
+
+            await repository.UpdateBook(book);
+            return TypedResults.Ok(new BookResponseDTO(book));
+
+        }
+
 
         [ProducesResponseType(StatusCodes.Status200OK)]
         public static async Task<IResult> GetBorrowings(IRepository repository, int userId)

@@ -17,6 +17,7 @@ namespace Library.Repository
 
         Task<IEnumerable<Book>> GetBooks();
         Task<Book?> GetBook(int bookId, PreloadPolicy preloadPolicy = PreloadPolicy.DoNotPreloadRelations);
+        Task<Book?> UpdateBook(Book book);
         Task<IEnumerable<Borrowing>> GetBorrowings(int userId);
         Task<Borrowing?> CreateBorrowing(DateOnly borrowedDate, User user, Book book);
     }

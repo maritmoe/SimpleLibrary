@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Library.Data;
 using Library.Models;
 using System.Runtime.CompilerServices;
+using System.Data;
 
 namespace Library.Repository
 {
@@ -73,6 +74,13 @@ namespace Library.Repository
                 default:
                     return null;
             }
+        }
+
+        public async Task<Book?> UpdateBook(Book book)
+        {
+            _context.Books.Update(book);
+            await _context.SaveChangesAsync();
+            return book;
         }
 
         public async Task<IEnumerable<Borrowing>> GetBorrowings(int userId)
