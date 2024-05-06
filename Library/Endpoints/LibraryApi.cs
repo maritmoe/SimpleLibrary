@@ -15,6 +15,7 @@ namespace Library.Endpoints
             surgeryGroup.MapGet("/users", GetUsers);
             surgeryGroup.MapPost("/users", CreateUser);
             surgeryGroup.MapGet("/books", GetBooks);
+            surgeryGroup.MapGet("/books/{bookId}", GetBook);
             surgeryGroup.MapGet("/borrowings/{userId}", GetBorrowings);
             surgeryGroup.MapPost("/borrowings", UserBorrowBook);
         }
@@ -64,6 +65,20 @@ namespace Library.Endpoints
             }
             return TypedResults.Ok(bookDto);
         }
+
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public static async Task<IResult> GetBook(IRepository repository, int bookId)
+        {
+            Book? book = await repository.GetBook(bookId, PreloadPolicy.PreloadRelations);
+            if (book == null)
+            {
+                return Results.NotFound("Book not found");
+            }
+            var bookDto = new BookResponseDTO(book);
+            return TypedResults.Ok(bookDto);
+        }
+
         [ProducesResponseType(StatusCodes.Status200OK)]
         public static async Task<IResult> GetBorrowings(IRepository repository, int userId)
         {
