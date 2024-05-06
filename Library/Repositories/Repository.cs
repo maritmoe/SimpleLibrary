@@ -37,6 +37,7 @@ namespace Library.Repository
             if (name == "") return null;
             var user = new User { Name = name };
             await _context.Users.AddAsync(user);
+            await _context.SaveChangesAsync();
             return user;
         }
 
@@ -79,6 +80,7 @@ namespace Library.Repository
             try
             {
                 await _context.Borrowings.AddAsync(borrowing);
+                await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {

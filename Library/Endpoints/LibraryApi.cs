@@ -16,7 +16,7 @@ namespace Library.Endpoints
             surgeryGroup.MapPost("/users", CreateUser);
             surgeryGroup.MapGet("/books", GetBooks);
             surgeryGroup.MapGet("/borrowings/{userId}", GetBorrowings);
-            surgeryGroup.MapPost("/borrowings/", UserBorrowBook);
+            surgeryGroup.MapPost("/borrowings", UserBorrowBook);
         }
 
         [ProducesResponseType(StatusCodes.Status200OK)]
