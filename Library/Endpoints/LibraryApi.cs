@@ -10,18 +10,18 @@ namespace Library.Endpoints
 
         public static void ConfigureLibraryApiEndpoint(this WebApplication app)
         {
-            var surgeryGroup = app.MapGroup("library");
+            var libraryGroup = app.MapGroup("library");
 
-            surgeryGroup.MapGet("/users", GetUsers);
-            surgeryGroup.MapGet("/users/{userId}", GetUser);
-            surgeryGroup.MapPost("/users", CreateUser);
-            surgeryGroup.MapDelete("/users/{userId}", DeleteUser);
-            surgeryGroup.MapGet("/books", GetBooks);
-            surgeryGroup.MapGet("/books/{bookId}", GetBook);
-            surgeryGroup.MapPost("/books", CreateBook);
-            surgeryGroup.MapPut("/books/{bookId}", UpdateBook);
-            surgeryGroup.MapGet("/borrowings/{userId}", GetBorrowings);
-            surgeryGroup.MapPost("/borrowings", UserBorrowBook);
+            libraryGroup.MapGet("/users", GetUsers);
+            libraryGroup.MapGet("/users/{userId}", GetUser);
+            libraryGroup.MapPost("/users", CreateUser);
+            libraryGroup.MapDelete("/users/{userId}", DeleteUser);
+            libraryGroup.MapGet("/books", GetBooks);
+            libraryGroup.MapGet("/books/{bookId}", GetBook);
+            libraryGroup.MapPost("/books", CreateBook);
+            libraryGroup.MapPut("/books/{bookId}", UpdateBook);
+            libraryGroup.MapGet("/borrowings/{userId}", GetBorrowings);
+            libraryGroup.MapPost("/borrowings", UserBorrowBook);
         }
 
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -53,7 +53,7 @@ namespace Library.Endpoints
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public static async Task<IResult> CreateUser(CreateUserPayload payload, IRepository repository)
         {
-            // validate: a) payload has all of the properties we need (ie. they are NOT null)
+            // validate payload has all of the properties needed
             if (payload.Name == null || payload.Name == "")
             {
                 return Results.BadRequest("A non-empty Name is required");
@@ -170,19 +170,13 @@ namespace Library.Endpoints
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public static async Task<IResult> UserBorrowBook(CreateBorrowingPayload payload, IRepository repository)
         {
-            // a) check for null properties on my payload => return bad request if missing fields
-            if (payload.userId == null || payload.bookId == null || payload.borrowedDate == null)
-            {
-                return Results.BadRequest("All fields userId, bookId and borrowedDate are required");
-            }
-
-            // b) try to get user; return not found if null
+            // try to get user; return not found if null
             User? user = await repository.GetUser(payload.userId);
             if (user == null)
             {
                 return Results.NotFound("User not found");
             }
-            // c) try to get book; return not found if null
+            // try to get book; return not found if null
             Book? book = await repository.GetBook(payload.bookId);
             if (book == null)
             {
