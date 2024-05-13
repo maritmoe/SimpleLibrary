@@ -15,6 +15,7 @@ namespace Library.Endpoints
             libraryGroup.MapGet("/users", GetUsers);
             libraryGroup.MapGet("/users/{userId}", GetUser);
             libraryGroup.MapPost("/users", CreateUser);
+            libraryGroup.MapPut("/users/{userId}", UpdateUser);
             libraryGroup.MapDelete("/users/{userId}", DeleteUser);
             libraryGroup.MapGet("/books", GetBooks);
             libraryGroup.MapGet("/books/{bookId}", GetBook);
@@ -66,6 +67,28 @@ namespace Library.Endpoints
             }
 
             return TypedResults.Ok(new UserResponseDTO(user));
+        }
+
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public static async Task<IResult> UpdateUser(IRepository repository, int userId, CreateUserPayload payload)
+        {
+            User? user = await repository.GetUser(userId, PreloadPolicy.PreloadRelations);
+            if (user == null)
+            {
+                return Results.NotFound("User not found");
+            }
+            if (payload.Name == null || payload.Name == "")
+            {
+                return Results.BadRequest("Name cannot be empty");
+            }
+
+            user.Name = payload.Name;
+
+            await repository.UpdateUser(user);
+            return TypedResults.Ok(new UserResponseDTO(user));
+
         }
 
         [ProducesResponseType(StatusCodes.Status200OK)]
