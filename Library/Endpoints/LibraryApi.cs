@@ -22,7 +22,8 @@ namespace Library.Endpoints
             libraryGroup.MapPost("/books", CreateBook);
             libraryGroup.MapPost("/books/multiple", CreateBooks);
             libraryGroup.MapPut("/books/{bookId}", UpdateBook);
-            libraryGroup.MapGet("/borrowings/{userId}", GetBorrowings);
+            libraryGroup.MapGet("/borrowings/{userId}", GetUserBorrowings);
+            libraryGroup.MapGet("/borrowings", GetAllBorrowings);
             libraryGroup.MapPost("/borrowings", UserBorrowBook);
         }
 
@@ -202,9 +203,21 @@ namespace Library.Endpoints
 
 
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public static async Task<IResult> GetBorrowings(IRepository repository, int userId)
+        public static async Task<IResult> GetUserBorrowings(IRepository repository, int userId)
         {
             var borrowings = await repository.GetBorrowings(userId);
+            var borrowingDto = new List<BorrowingDTO>();
+            foreach (Borrowing borrowing in borrowings)
+            {
+                borrowingDto.Add(new BorrowingDTO(borrowing));
+            }
+            return TypedResults.Ok(borrowingDto);
+        }
+
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public static async Task<IResult> GetAllBorrowings(IRepository repository)
+        {
+            var borrowings = await repository.GetBorrowings();
             var borrowingDto = new List<BorrowingDTO>();
             foreach (Borrowing borrowing in borrowings)
             {

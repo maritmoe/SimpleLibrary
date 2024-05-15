@@ -20,6 +20,7 @@ namespace Library.Repository
         Task<Book?> CreateBook(string title, int pages);
         Task<Book?> UpdateBook(Book book);
         Task<IEnumerable<Borrowing>> GetBorrowings(int userId);
+        Task<IEnumerable<Borrowing>> GetBorrowings();
         Task<Borrowing?> CreateBorrowing(DateOnly borrowedDate, User user, Book book);
     }
 }

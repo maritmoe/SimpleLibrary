@@ -103,6 +103,11 @@ namespace Library.Repository
             return await _context.Borrowings.Where(e => e.UserId == userId).Include(s => s.User).Include(e => e.Book).ToListAsync();
         }
 
+        public async Task<IEnumerable<Borrowing>> GetBorrowings()
+        {
+            return await _context.Borrowings.Include(s => s.User).Include(e => e.Book).ToListAsync();
+        }
+
         public async Task<Borrowing?> CreateBorrowing(DateOnly borrowedDate, User user, Book book)
         {
             if (user == null || book == null) return null;
