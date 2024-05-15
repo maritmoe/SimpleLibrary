@@ -20,6 +20,7 @@ namespace Library.Endpoints
             libraryGroup.MapGet("/books", GetBooks);
             libraryGroup.MapGet("/books/{bookId}", GetBook);
             libraryGroup.MapPost("/books", CreateBook);
+            libraryGroup.MapPost("/books/multiple", CreateBooks);
             libraryGroup.MapPut("/books/{bookId}", UpdateBook);
             libraryGroup.MapGet("/borrowings/{userId}", GetBorrowings);
             libraryGroup.MapPost("/borrowings", UserBorrowBook);
@@ -146,6 +147,29 @@ namespace Library.Endpoints
             }
 
             return TypedResults.Ok(new BookResponseDTO(book));
+
+        }
+
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public static async Task<IResult> CreateBooks(IRepository repository, List<BookPayload> payloadList)
+        {
+            var bookDtos = new List<BookDTO>();
+            foreach (BookPayload payload in payloadList)
+            {
+                if (payload.Title == null || payload.Title == "" || payload.Pages <= 0)
+                {
+                    return Results.BadRequest("A non-empty Title and positive Pages is required");
+                }
+
+                Book? book = await repository.CreateBook(payload.Title, payload.Pages);
+                if (book == null)
+                {
+                    return Results.BadRequest($"Failed to create book with title {payload.Title}");
+                }
+                bookDtos.Add(new BookDTO(book));
+            }
+            return TypedResults.Ok(bookDtos);
 
         }
 
