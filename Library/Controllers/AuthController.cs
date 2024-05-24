@@ -1,3 +1,4 @@
+using Library.DTOs;
 using Library.Enums;
 using Library.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -27,7 +28,7 @@ public class AuthController : ControllerBase
             var (status, message) = await _authService.Login(model);
             if (status == 0)
                 return BadRequest(message);
-            return Ok(message);
+            return Ok(new LogInResponse(message));
         }
         catch (Exception ex)
         {
