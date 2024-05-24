@@ -19,7 +19,7 @@ namespace Library.Repository
             return await _context.Users.Include(s => s.Borrowings).ThenInclude(e => e.Book).ToListAsync();
         }
 
-        public async Task<User?> GetUser(int userId, PreloadPolicy preloadPolicy = PreloadPolicy.DoNotPreloadRelations)
+        public async Task<User?> GetUser(string userId, PreloadPolicy preloadPolicy = PreloadPolicy.DoNotPreloadRelations)
         {
 
             switch (preloadPolicy)
@@ -49,7 +49,7 @@ namespace Library.Repository
             return user;
         }
 
-        public async Task<User?> DeleteUser(int userId)
+        public async Task<User?> DeleteUser(string userId)
         {
             User? user = await _context.Users.FindAsync(userId);
             if (user == null)
@@ -98,7 +98,7 @@ namespace Library.Repository
             return book;
         }
 
-        public async Task<IEnumerable<Borrowing>> GetBorrowings(int userId)
+        public async Task<IEnumerable<Borrowing>> GetBorrowings(string userId)
         {
             return await _context.Borrowings.Where(e => e.UserId == userId).Include(s => s.User).Include(e => e.Book).ToListAsync();
         }

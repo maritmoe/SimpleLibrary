@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Library.DTOs;
 using Library.Models;
 using Library.Repository;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Library.Endpoints
 {
@@ -14,7 +15,7 @@ namespace Library.Endpoints
 
             libraryGroup.MapGet("/users", GetUsers);
             libraryGroup.MapGet("/users/{userId}", GetUser);
-            libraryGroup.MapPost("/users", CreateUser);
+            libraryGroup.MapPost("/users", CreateUser); // TODO: delete?
             libraryGroup.MapPut("/users/{userId}", UpdateUser);
             libraryGroup.MapDelete("/users/{userId}", DeleteUser);
             libraryGroup.MapGet("/books", GetBooks);
@@ -27,6 +28,8 @@ namespace Library.Endpoints
             libraryGroup.MapPost("/borrowings", UserBorrowBook);
         }
 
+
+        [Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public static async Task<IResult> GetUsers(IRepository repository)
         {
@@ -39,9 +42,12 @@ namespace Library.Endpoints
             return TypedResults.Ok(userDto);
         }
 
+
+        // TODO: Check if authorized user has id userId or is admin
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public static async Task<IResult> GetUser(IRepository repository, int userId)
+        public static async Task<IResult> GetUser(IRepository repository, string userId)
         {
             User? user = await repository.GetUser(userId, PreloadPolicy.PreloadRelations);
             if (user == null)
@@ -52,6 +58,8 @@ namespace Library.Endpoints
             return TypedResults.Ok(userDto);
         }
 
+
+        //TODO: Delete?
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public static async Task<IResult> CreateUser(CreateUserPayload payload, IRepository repository)
@@ -71,10 +79,13 @@ namespace Library.Endpoints
             return TypedResults.Ok(new UserResponseDTO(user));
         }
 
+
+        // TODO: Check if authorized user has id userId or is admin
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public static async Task<IResult> UpdateUser(IRepository repository, int userId, CreateUserPayload payload)
+        public static async Task<IResult> UpdateUser(IRepository repository, string userId, CreateUserPayload payload)
         {
             User? user = await repository.GetUser(userId, PreloadPolicy.PreloadRelations);
             if (user == null)
@@ -93,9 +104,12 @@ namespace Library.Endpoints
 
         }
 
+
+        // TODO: Check if authorized user has id userId or is admin
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public static async Task<IResult> DeleteUser(IRepository repository, int userId)
+        public static async Task<IResult> DeleteUser(IRepository repository, string userId)
         {
             User? user = await repository.DeleteUser(userId);
             if (user == null)
@@ -106,6 +120,7 @@ namespace Library.Endpoints
         }
 
 
+        [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public static async Task<IResult> GetBooks(IRepository repository)
         {
@@ -119,6 +134,8 @@ namespace Library.Endpoints
             return TypedResults.Ok(bookDto);
         }
 
+
+        [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public static async Task<IResult> GetBook(IRepository repository, int bookId)
@@ -132,6 +149,8 @@ namespace Library.Endpoints
             return TypedResults.Ok(bookDto);
         }
 
+
+        [Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public static async Task<IResult> CreateBook(IRepository repository, BookPayload payload)
@@ -151,6 +170,8 @@ namespace Library.Endpoints
 
         }
 
+
+        [Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public static async Task<IResult> CreateBooks(IRepository repository, List<BookPayload> payloadList)
@@ -174,6 +195,8 @@ namespace Library.Endpoints
 
         }
 
+
+        [Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -202,8 +225,10 @@ namespace Library.Endpoints
         }
 
 
+        // TODO: Check if authorized user has id userId or is admin
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public static async Task<IResult> GetUserBorrowings(IRepository repository, int userId)
+        public static async Task<IResult> GetUserBorrowings(IRepository repository, string userId)
         {
             var borrowings = await repository.GetBorrowings(userId);
             var borrowingDto = new List<BorrowingDTO>();
@@ -214,6 +239,8 @@ namespace Library.Endpoints
             return TypedResults.Ok(borrowingDto);
         }
 
+
+        [Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public static async Task<IResult> GetAllBorrowings(IRepository repository)
         {
@@ -226,6 +253,9 @@ namespace Library.Endpoints
             return TypedResults.Ok(borrowingDto);
         }
 
+
+        // TODO: Check if authorized user has id userId or is admin
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public static async Task<IResult> UserBorrowBook(CreateBorrowingPayload payload, IRepository repository)

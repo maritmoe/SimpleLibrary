@@ -1,16 +1,14 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Library.Enums;
+using Microsoft.AspNetCore.Identity;
 
 namespace Library.Models
 {
 
     [Table("users")]
-    public class User
+    public class User : IdentityUser
     {
-        [Column("id")]
-        [Key]
-        public int Id { get; set; }
-
         [Column("name")]
         [Required]
         public string Name { get; set; }

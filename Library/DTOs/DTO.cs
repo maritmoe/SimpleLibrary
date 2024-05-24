@@ -1,11 +1,12 @@
 using Library.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace Library.DTOs
 {
     class UserResponseDTO
     {
         // define all of the properties that we want to return to the client
-        public int Id { get; set; }
+        public string Id { get; set; }
         public string Name { get; set; }
 
         public List<UserBorrowingDTO> Borrowings { get; set; } = new List<UserBorrowingDTO>();
@@ -105,7 +106,7 @@ namespace Library.DTOs
 
     class UserDTO
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
         public string Name { get; set; }
 
         public UserDTO(User user)

@@ -1,9 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using Library.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace Library.Data
 {
-    public class DatabaseContext : DbContext
+    public class DatabaseContext : IdentityDbContext<User>
     {
         private string _connectionString;
         public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options)
@@ -22,10 +23,11 @@ namespace Library.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
             // set a primary composite key on the borrowings table
             modelBuilder.Entity<Borrowing>().HasKey(e => new { e.BorrowedDate, e.UserId, e.BookId });
 
-            // seed some users
+            /* // seed some users
             modelBuilder.Entity<User>().HasData(
                 new User { Id = 1, Name = "John Doe" },
                 new User { Id = 2, Name = "Jane Doe" },
@@ -49,10 +51,10 @@ namespace Library.Data
                 new Borrowing { BorrowedDate = new DateOnly(2024, 01, 11), UserId = 3, BookId = 4 },
                 new Borrowing { BorrowedDate = new DateOnly(2024, 01, 15), UserId = 4, BookId = 3 },
                 new Borrowing { BorrowedDate = new DateOnly(2024, 02, 01), UserId = 2, BookId = 1 },
-            ];
+            ]; 
 
             // add to model
-            modelBuilder.Entity<Borrowing>().HasData(borrowings);
+            modelBuilder.Entity<Borrowing>().HasData(borrowings);*/
         }
 
         public DbSet<User> Users { get; set; }
