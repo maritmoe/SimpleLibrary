@@ -1,3 +1,4 @@
+using Library.Data;
 using Library.DTOs;
 using Library.Enums;
 using Library.Models;
@@ -10,10 +11,13 @@ public class AuthController : ControllerBase
     private readonly IAuthService _authService;
     private readonly ILogger<AuthController> _logger;
 
-    public AuthController(IAuthService authService, ILogger<AuthController> logger)
+    private readonly DatabaseContext _context;
+
+    public AuthController(IAuthService authService, ILogger<AuthController> logger, DatabaseContext context)
     {
         _authService = authService;
         _logger = logger;
+        _context = context;
     }
 
 
@@ -28,7 +32,12 @@ public class AuthController : ControllerBase
             var (status, message) = await _authService.Login(model);
             if (status == 0)
                 return BadRequest(message);
-            return Ok(new LogInResponse(message));
+            User? user = _context.Users.FirstOrDefault(u => u.Email == model.Email);
+            if (user is null)
+            {
+                return Unauthorized();
+            }
+            return Ok(new LogInResponse(message, user));
         }
         catch (Exception ex)
         {
@@ -50,7 +59,7 @@ public class AuthController : ControllerBase
             {
                 return BadRequest(message);
             }
-            return CreatedAtAction(nameof(Register), model);
+            return CreatedAtAction(nameof(Register), new RegisteredResponse(model));
 
         }
         catch (Exception ex)
