@@ -13,6 +13,9 @@ namespace Library.Models
         [Required]
         public string Name { get; set; }
 
+        [Column("role")]
+        public Role Role { get; set; }
+
         public ICollection<Borrowing> Borrowings { get; set; }
     }
 }
